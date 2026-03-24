@@ -387,6 +387,91 @@ button:disabled {
   word-break: keep-all;
 }
 
+.maze-box {
+  display: grid;
+  gap: 10px;
+}
+
+.maze-board {
+  width: min(100%, 360px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  border: 2px solid #e3bf86;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8e8c8;
+}
+
+.maze-cell {
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(205, 164, 98, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.maze-cell.path {
+  background: #fff6e2;
+}
+
+.maze-cell.wall {
+  background: #d4a669;
+}
+
+.maze-cell.entrance {
+  background: #d6f0ff;
+}
+
+.maze-cell.exit {
+  background: #d7f3c9;
+}
+
+.maze-cell.player {
+  padding: 1px;
+}
+
+.maze-dog {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.maze-controls {
+  margin-top: 2px;
+  display: grid;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-areas:
+    ". up ."
+    "left down right";
+  justify-content: center;
+  gap: 8px;
+}
+
+.maze-btn {
+  min-height: 48px;
+  padding: 0;
+  font-size: 1.25rem;
+  border-radius: 14px;
+}
+
+.maze-btn-up {
+  grid-area: up;
+}
+
+.maze-btn-left {
+  grid-area: left;
+}
+
+.maze-btn-down {
+  grid-area: down;
+}
+
+.maze-btn-right {
+  grid-area: right;
+}
+
 .dog-select-grid {
   display: grid;
   grid-template-columns: 1fr;

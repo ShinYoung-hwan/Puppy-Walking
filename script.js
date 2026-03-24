@@ -12,6 +12,7 @@ const state = {
   trainingSequence: [],
   trainingIndex: 0,
   quizIndex: 0,
+  mazePlayer: null,
   endingStarted: false,
   guideDogName: "",
   selectedDog: null,
@@ -102,6 +103,21 @@ const dogChoices = [
 ];
 
 const trainingActions = ["앉아", "일어서", "엎드려"];
+const mazeMap = [
+  [0, 0, 0, 1, 0, 0, 0, 0, 1, 0],
+  [1, 1, 0, 1, 0, 1, 1, 0, 1, 0],
+  [0, 0, 0, 0, 0, 1, 0, 0, 1, 0],
+  [0, 1, 1, 1, 0, 1, 0, 1, 1, 0],
+  [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+  [1, 1, 0, 1, 1, 1, 1, 1, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+  [1, 1, 1, 1, 1, 0, 0, 0, 1, 0]
+];
+const mazeEntrance = { row: 0, col: 0 };
+const mazeExit = { row: 9, col: 9 };
+
 const quizQuestions = [
   {
     question: "구글에서 만든 시각장애인을 위한 거리뷰 프로그램 이름은?",
@@ -248,7 +264,11 @@ function renderMenu() {
     const btn = document.createElement("button");
     btn.textContent = `${i + 1}. ${quest}`;
     btn.disabled = state.completed.includes(quest);
-    btn.addEventListener("click", () => completeQuest(quest));
+    if (quest === "산책하기") {
+      btn.addEventListener("click", startMazeQuest);
+    } else {
+      btn.addEventListener("click", () => completeQuest(quest));
+    }
     wrapper.appendChild(btn);
   });
 
@@ -268,6 +288,107 @@ function renderMenu() {
   wrapper.appendChild(quizBtn);
 
   actionArea.appendChild(wrapper);
+}
+
+function startMazeQuest() {
+  state.currentMode = "maze";
+  state.mazePlayer = { ...mazeEntrance };
+  renderMazeQuest();
+}
+
+function renderMazeQuest() {
+  if (!state.mazePlayer) {
+    state.mazePlayer = { ...mazeEntrance };
+  }
+
+  actionArea.innerHTML = `
+    <div class="mini-box main-box maze-box">
+      <div class="badge">산책 미로 퀘스트</div>
+      <p>10x10 미로를 통과해 입구에서 출구까지 도착하세요.</p>
+      <p><strong>입구:</strong> 좌상단 / <strong>출구:</strong> 우하단</p>
+      <div class="maze-board" id="mazeBoard" aria-label="산책 미로"></div>
+      <div class="maze-controls" id="mazeControls" aria-label="이동 방향">
+        <button type="button" data-dir="up" class="maze-btn maze-btn-up">↑</button>
+        <button type="button" data-dir="left" class="maze-btn maze-btn-left">←</button>
+        <button type="button" data-dir="down" class="maze-btn maze-btn-down">↓</button>
+        <button type="button" data-dir="right" class="maze-btn maze-btn-right">→</button>
+      </div>
+      <div style="margin-top:12px;">
+        <button id="mazeBackBtn">메뉴로 돌아가기</button>
+      </div>
+    </div>
+  `;
+
+  drawMazeBoard();
+
+  const mazeControls = document.getElementById("mazeControls");
+  mazeControls.addEventListener("click", event => {
+    const button = event.target.closest("button[data-dir]");
+    if (!button) return;
+    moveMazePlayer(button.dataset.dir);
+  });
+
+  document.getElementById("mazeBackBtn").addEventListener("click", renderMenu);
+}
+
+function drawMazeBoard() {
+  const mazeBoard = document.getElementById("mazeBoard");
+  if (!mazeBoard || !state.mazePlayer) return;
+
+  mazeBoard.innerHTML = "";
+
+  for (let row = 0; row < mazeMap.length; row += 1) {
+    for (let col = 0; col < mazeMap[row].length; col += 1) {
+      const cell = document.createElement("div");
+      const isWall = mazeMap[row][col] === 1;
+      const isEntrance = row === mazeEntrance.row && col === mazeEntrance.col;
+      const isExit = row === mazeExit.row && col === mazeExit.col;
+      const isPlayer = row === state.mazePlayer.row && col === state.mazePlayer.col;
+
+      cell.className = `maze-cell ${isWall ? "wall" : "path"}`;
+      if (isEntrance) cell.classList.add("entrance");
+      if (isExit) cell.classList.add("exit");
+      if (isPlayer) {
+        cell.classList.add("player");
+        cell.innerHTML = `<img src="${state.selectedDog}" alt="산책 중 강아지" class="maze-dog" />`;
+      }
+
+      mazeBoard.appendChild(cell);
+    }
+  }
+}
+
+function moveMazePlayer(direction) {
+  if (!state.mazePlayer) return;
+
+  const directionMap = {
+    up: [-1, 0],
+    down: [1, 0],
+    left: [0, -1],
+    right: [0, 1]
+  };
+
+  const [dRow, dCol] = directionMap[direction] || [0, 0];
+  const nextRow = state.mazePlayer.row + dRow;
+  const nextCol = state.mazePlayer.col + dCol;
+
+  const isOutOfBounds =
+    nextRow < 0 ||
+    nextCol < 0 ||
+    nextRow >= mazeMap.length ||
+    nextCol >= mazeMap[0].length;
+
+  if (isOutOfBounds || mazeMap[nextRow][nextCol] === 1) {
+    return;
+  }
+
+  state.mazePlayer = { row: nextRow, col: nextCol };
+  drawMazeBoard();
+
+  if (nextRow === mazeExit.row && nextCol === mazeExit.col) {
+    showToast(`<strong>산책하기 성공!</strong><br>미로를 통과해 무사히 출구에 도착했다.`, "success");
+    completeQuest("산책하기");
+  }
 }
 
 function startTrainingGame() {
@@ -460,6 +581,7 @@ function resetGame() {
   state.trainingSequence = [];
   state.trainingIndex = 0;
   state.quizIndex = 0;
+  state.mazePlayer = null;
   state.endingStarted = false;
   state.guideDogName = "";
   state.selectedDog = null;
