@@ -438,7 +438,7 @@ function submitGuideDogName() {
     <div class="ending-box main-box">
       <div class="badge">이름 정하기 완료</div>
       <h3>${value}</h3>
-      <p>작은 꼬리 흔들림으로 시작된 ${value}이 아이가 이제 누군가의 길을 밝혀 줄 준비를 마쳤어요!</p>
+      <p>작은 꼬리 흔들림으로 시작된 ${value}이(가) 이제 누군가의 길을 밝혀 줄 준비를 마쳤어요!</p>
       <p class="success"><strong>이제 강아지 꾸미기 단계로 넘어볼까요?</strong></p>
       <button id="restartBtn">처음부터 다시 플레이</button>
     </div>
