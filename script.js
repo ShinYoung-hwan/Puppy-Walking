@@ -400,7 +400,6 @@ function submitGuideDogName() {
 
   state.guideDogName = value;
   puppyStatus.textContent = `🦮 [예비 안내견 | 평온] ${value}가 조용히 네 곁에 기대며 새로운 시작을 기다린다.`;
-  puppyFace.textContent = "૮ ˶• ᴗ •˶ ა";
   puppySubEmotion.textContent = `(이제 '${value}'라는 이름으로 세상을 향해 나아갈 준비를 한다 ✨)`;
 
   actionArea.innerHTML = `
