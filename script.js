@@ -1,6 +1,5 @@
 const state = {
   simpleQuests: [
-    "안내하기",
     "예방접종",
     "밥 주기",
     "물 주기",
@@ -19,7 +18,7 @@ const state = {
   toastTimer: null
 };
 
-const totalQuestCount = 7;
+const totalQuestCount = state.simpleQuests.length + 2;
 
 const puppyStatus = document.getElementById("puppyStatus");
 const puppySubEmotion = document.getElementById("puppySubEmotion");
@@ -254,14 +253,17 @@ function renderMenu() {
     wrapper.appendChild(btn);
   });
 
+  const trainingNumber = state.simpleQuests.length + 1;
+  const quizNumber = state.simpleQuests.length + 2;
+
   const trainingBtn = document.createElement("button");
-  trainingBtn.textContent = `6. 행동 훈련 게임`;
+  trainingBtn.textContent = `${trainingNumber}. 행동 훈련 게임`;
   trainingBtn.disabled = state.trainingDone;
   trainingBtn.addEventListener("click", startTrainingGame);
   wrapper.appendChild(trainingBtn);
 
   const quizBtn = document.createElement("button");
-  quizBtn.textContent = `7. 퀴즈 게임`;
+  quizBtn.textContent = `${quizNumber}. 퀴즈 게임`;
   quizBtn.disabled = state.quizDone;
   quizBtn.addEventListener("click", startQuizGame);
   wrapper.appendChild(quizBtn);
