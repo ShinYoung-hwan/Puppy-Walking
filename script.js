@@ -98,7 +98,7 @@ const growthLines = [
 const dogChoices = [
   { file: "dog1.jpg", label: "도도한 리트리버" },
   { file: "dog2.jpg", label: "해맑은 리트리버" },
-  { file: "dog3.jpg", label: "포근한 리트리버" }
+  { file: "dog3.jpg", label: "여린 리트리버" }
 ];
 
 const trainingActions = ["앉아", "일어서", "엎드려"];
@@ -216,7 +216,6 @@ function renderDogSelection() {
     card.innerHTML = `
       <img src="${dog.file}" alt="${dog.label}" loading="lazy" />
       <strong>${index + 1}. ${dog.label}</strong>
-      <span>${dog.file}</span>
     `;
     card.addEventListener("click", () => {
       state.selectedDog = dog.file;
