@@ -12,6 +12,7 @@ const state = {
   currentMode: "select-dog",
   trainingSequence: [],
   trainingIndex: 0,
+  quizIndex: 0,
   endingStarted: false,
   guideDogName: "",
   selectedDog: null,
@@ -102,16 +103,28 @@ const dogChoices = [
 ];
 
 const trainingActions = ["앉아", "일어서", "엎드려"];
-const quiz = {
-  question: "퍼피워킹 중 가장 중요한 태도로 알맞은 것은 무엇일까요?",
-  choices: [
-    "강아지가 실수하면 바로 혼내기",
-    "일관되게 돌보고, 차분하게 훈련하기",
-    "사람이 많을수록 무조건 자주 데려가기",
-    "간식을 주기 위해 규칙을 자주 바꾸기"
-  ],
-  answer: 2
-};
+const quizQuestions = [
+  {
+    question: "구글에서 만든 시각장애인을 위한 거리뷰 프로그램 이름은?",
+    choices: [
+      "Street Reader AI",
+      "Vision Walk Studio",
+      "Street Leader AI",
+      "Guide Lens Route"
+    ],
+    answer: 1
+  },
+  {
+    question: "안내견 분양 후 정기 관리는 몇 개월마다 진행될까요?",
+    choices: [
+      "3개월",
+      "6개월",
+      "9개월",
+      "12개월"
+    ],
+    answer: 2
+  }
+];
 
 function showToast(text, type = "") {
   if (!toast) return;
@@ -329,10 +342,18 @@ function submitTrainingAction(action) {
 
 function startQuizGame() {
   state.currentMode = "quiz";
+  state.quizIndex = 0;
+  renderQuizStep();
+}
+
+function renderQuizStep() {
+  const currentQuiz = quizQuestions[state.quizIndex];
+
   actionArea.innerHTML = `
     <div class="mini-box main-box">
       <div class="badge">퀴즈 게임</div>
-      <p><strong>${quiz.question}</strong></p>
+      <p><strong>문제 ${state.quizIndex + 1} / ${quizQuestions.length}</strong></p>
+      <p><strong>${currentQuiz.question}</strong></p>
       <div class="choice-grid" id="quizChoices"></div>
       <div style="margin-top:12px;">
         <button id="quizBackBtn">메뉴로 돌아가기</button>
@@ -341,7 +362,7 @@ function startQuizGame() {
   `;
 
   const quizChoices = document.getElementById("quizChoices");
-  quiz.choices.forEach((choice, index) => {
+  currentQuiz.choices.forEach((choice, index) => {
     const btn = document.createElement("button");
     btn.textContent = `${index + 1}. ${choice}`;
     btn.addEventListener("click", () => submitQuiz(index + 1));
@@ -352,23 +373,34 @@ function startQuizGame() {
 }
 
 function submitQuiz(choiceNumber) {
-  if (choiceNumber === quiz.answer) {
-    const beforeStage = getStageIndex();
-    state.quizDone = true;
-    const afterStage = getStageIndex();
+  const currentQuiz = quizQuestions[state.quizIndex];
 
-    let msg = `<strong>퀴즈 성공!</strong><br>올바른 돌봄의 태도를 이해하고 있다.`;
-    if (afterStage > beforeStage) {
-      msg += `<br><span class="success">성장 단계 상승! → ${stageInfo[afterStage].icon} ${stageInfo[afterStage].name}</span>`;
-    }
-    msg += `<br>${growthLines[Math.min(getCompletedCount() - 1, growthLines.length - 1)]}`;
-
-    showToast(msg, "success");
-    updateAll();
-  } else {
+  if (choiceNumber !== currentQuiz.answer) {
     showToast(`<strong>퀴즈 실패</strong><br>정답을 다시 생각해 보고 재도전하자.`, "fail");
     renderMenu();
+    return;
   }
+
+  state.quizIndex += 1;
+
+  if (state.quizIndex < quizQuestions.length) {
+    showToast(`<strong>정답!</strong><br>다음 문제로 이어서 도전해 보자.`, "success");
+    renderQuizStep();
+    return;
+  }
+
+  const beforeStage = getStageIndex();
+  state.quizDone = true;
+  const afterStage = getStageIndex();
+
+  let msg = `<strong>퀴즈 성공!</strong><br>올바른 돌봄의 태도를 이해하고 있다.`;
+  if (afterStage > beforeStage) {
+    msg += `<br><span class="success">성장 단계 상승! → ${stageInfo[afterStage].icon} ${stageInfo[afterStage].name}</span>`;
+  }
+  msg += `<br>${growthLines[Math.min(getCompletedCount() - 1, growthLines.length - 1)]}`;
+
+  showToast(msg, "success");
+  updateAll();
 }
 
 function renderEnding() {
@@ -426,6 +458,7 @@ function resetGame() {
   state.currentMode = "select-dog";
   state.trainingSequence = [];
   state.trainingIndex = 0;
+  state.quizIndex = 0;
   state.endingStarted = false;
   state.guideDogName = "";
   state.selectedDog = null;
