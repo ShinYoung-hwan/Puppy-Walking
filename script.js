@@ -107,9 +107,9 @@ const quizQuestions = [
     question: "구글에서 만든 시각장애인을 위한 거리뷰 프로그램 이름은?",
     choices: [
       "Street Reader AI",
-      "Vision Walk Studio",
+      "Street Rider AI",
       "Street Leader AI",
-      "Guide Lens Route"
+      "Street Writer AI"
     ],
     answer: 1
   },
@@ -215,7 +215,6 @@ function renderDogSelection() {
     <div class="mini-box main-box">
       <div class="badge">시작 준비</div>
       <h2>함께할 리트리버를 선택해 주세요</h2>
-      <p>아래 이미지 파일명으로 강아지 이미지를 불러옵니다.</p>
       <div class="dog-select-grid" id="dogSelectGrid"></div>
     </div>
   `;
@@ -231,7 +230,7 @@ function renderDogSelection() {
     `;
     card.addEventListener("click", () => {
       state.selectedDog = dog.file;
-      showToast(`<strong>${dog.file}</strong> 선택 완료!<br>이제 퍼피워킹을 시작해 보자.`, "success");
+      showToast(`<strong>${dog.label}</strong> 선택 완료!<br>이제 퍼피워킹을 시작해 보자.`, "success");
       updateAll();
     });
     dogSelectGrid.appendChild(card);
@@ -411,7 +410,7 @@ function renderEnding() {
       <div class="badge">안내견 학교 입성</div>
       <p><strong>처음 모습</strong> — 장난기 많고 세상이 궁금한 작은 리트리버 🐶</p>
       <p><strong>지금 모습</strong> — 차분함과 따뜻함을 지닌 예비 안내견 🦮</p>
-      <p>너와 함께한 시간 덕분에 이 아이는 누군가의 손과 발이 되어 줄 준비를 마쳤다.</p>
+      <p>함께해 주신 덕분에 이 아이가 이제 누군가를 도울 준비를 마쳤답니다!</p>
       <p><strong>이제 안내견의 이름을 지어 주세요.</strong></p>
       <input id="guideDogNameInput" class="name-input" type="text" maxlength="16" placeholder="예: 별이, 하루, 마루" />
       <br>
@@ -439,8 +438,8 @@ function submitGuideDogName() {
     <div class="ending-box main-box">
       <div class="badge">이름 정하기 완료</div>
       <h3>${value}</h3>
-      <p>작은 꼬리 흔들림으로 시작했던 시간은, 이제 누군가의 길을 밝혀 줄 약속이 되었다.</p>
-      <p class="success"><strong>파트너 매칭 단계 시작</strong></p>
+      <p>작은 꼬리 흔들림으로 시작된 ${value}이 아이가 이제 누군가의 길을 밝혀 줄 준비를 마쳤어요!</p>
+      <p class="success"><strong>이제 강아지 꾸미기 단계로 넘어볼까요?</strong></p>
       <button id="restartBtn">처음부터 다시 플레이</button>
     </div>
   `;
