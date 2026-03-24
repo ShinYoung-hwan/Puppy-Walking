@@ -21,7 +21,6 @@ const state = {
 const totalQuestCount = 7;
 
 const puppyStatus = document.getElementById("puppyStatus");
-const puppyFace = document.getElementById("puppyFace");
 const puppySubEmotion = document.getElementById("puppySubEmotion");
 const puppyImage = document.getElementById("puppyImage");
 const actionArea = document.getElementById("actionArea");
@@ -151,7 +150,6 @@ function updatePuppyUI() {
   const subEmotion = pickByTurn(stage.subEmotions, 1);
 
   puppyStatus.textContent = `${stage.icon} [${stage.name} | ${emotion}] ${action}`;
-  puppyFace.textContent = stage.face;
   puppySubEmotion.textContent = subEmotion;
 
   if (puppyImage) {
